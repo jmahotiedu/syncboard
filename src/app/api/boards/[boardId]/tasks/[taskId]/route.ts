@@ -40,6 +40,14 @@ export async function PATCH(
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
+    if (parsed.data.columnId != null) {
+      const targetColumn = await prisma.column.findFirst({
+        where: { id: parsed.data.columnId, boardId },
+      });
+      if (!targetColumn) {
+        return NextResponse.json({ error: "Column not found" }, { status: 404 });
+      }
+    }
     const task = await prisma.task.update({
       where: { id: taskId },
       data: {

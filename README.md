@@ -1,29 +1,53 @@
-# Syncboard
+﻿# Syncboard
 
-Real-time collaborative kanban board. Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, Prisma, NextAuth (GitHub OAuth). REST API for boards, columns, tasks. Demo board at `/boards/demo`.
+Real-time collaborative Kanban board built with Next.js 15, TypeScript, Prisma, and Socket.IO.
 
-## Status
+## Features
 
-Implemented: app shell, home (board list + new board), board view with columns/tasks and add-task form, REST API (boards, columns, tasks CRUD, members), NextAuth (GitHub), Prisma + PostgreSQL, demo board at `/boards/demo`. Next: Socket.io for live sync, drag-and-drop (@dnd-kit), presence.
+- Drag-and-drop task movement across columns (`@dnd-kit`)
+- Optimistic updates for task moves
+- Real-time sync between clients (task create/move/update/delete)
+- Live presence bar with heartbeat-based online tracking
+- Connection status indicator (connected/reconnecting/offline)
+- Board/task REST API with Zod validation
+- Demo board bootstrap at `/boards/demo`
 
 ## Run locally
 
 ```bash
 cp .env.example .env
-# Set DATABASE_URL (e.g. Neon or local Postgres)
 npm install
 npx prisma generate
 npx prisma db push
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open `http://localhost:3000`, then open the same board in two tabs to verify live sync.
 
-## Tech (planned)
+## Verification
 
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind v4, @dnd-kit
-- **Backend**: REST API, Socket.io server, Prisma, PostgreSQL (Neon), NextAuth.js
-- **Real-time**: WebSocket events for task/column updates, presence, conflict resolution
+```bash
+npm run lint
+npm test
+npm run build
+```
+
+## Real-time architecture
+
+1. Client performs API mutation (`POST`/`PATCH`/`DELETE`) and applies optimistic UI update.
+2. Client emits Socket.IO event to board room.
+3. Socket server broadcasts event to other board participants.
+4. Receivers merge incoming state with last-write-wins behavior based on `updatedAt`.
+
+Socket server starts from `GET /api/socket` and listens on `SYNCBOARD_SOCKET_PORT` (default `4001`).
+
+## Tech
+
+- Next.js 15 (App Router), React 19, TypeScript
+- Prisma + PostgreSQL
+- Socket.IO
+- Tailwind CSS v4
+- NextAuth (GitHub provider)
 
 ## License
 

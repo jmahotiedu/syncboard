@@ -15,11 +15,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Install
-        run: npm install
+        run: npm ci
 
       - name: Prisma generate
         run: npx prisma generate
@@ -29,9 +29,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test
+        run: npm test
+
       - name: Build
         run: npm run build
         env:
           DATABASE_URL: "postgresql://user:pass@localhost:5432/syncboard?schema=public"
           NEXTAUTH_URL: "http://localhost:3000"
           NEXTAUTH_SECRET: "ci-secret"
+          NEXT_PUBLIC_SOCKET_URL: "http://localhost:4001"
