@@ -17,10 +17,11 @@ Real-time collaborative Kanban board built with Next.js 15, TypeScript, Prisma, 
 ```bash
 cp .env.example .env
 npm install
-npx prisma generate
 npx prisma db push
 npm run dev
 ```
+
+`npm install` runs `prisma generate` automatically.
 
 Open `http://localhost:3000`, then open the same board in two tabs to verify live sync.
 
